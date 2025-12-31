@@ -6,19 +6,26 @@
   <title>🌅 Nascer & Pôr do Sol — Brasil</title>
   <meta name="description" content="Descubra horários de nascer e pôr do sol no Brasil. Atualizações em tempo real e cache offline.">
 
+  <!-- Favicon e Manifest -->
   <link rel="icon" href="icons/sun-192.png" type="image/png">
   <link rel="manifest" href="manifest.json">
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 
+  <!-- Bibliotecas JS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
   <script src="main.js" defer></script>
 </head>
 <body>
+  <!-- Topbar -->
   <header class="topbar">
     <h1>🌅 Nascer & Pôr do Sol — Brasil</h1>
     <button id="temaBtn" title="Alternar tema" aria-pressed="false">🌙</button>
   </header>
 
+  <!-- Toolbar -->
   <section class="toolbar card" aria-label="Ferramentas de busca e status">
     <div class="search-wrap">
       <label for="citySearch">Cidade</label>
@@ -35,6 +42,7 @@
     </div>
   </section>
 
+  <!-- Conteúdo principal -->
   <main class="card" role="main">
     <div class="controls">
       <button id="atualizar">🔄 Atualizar agora</button>
