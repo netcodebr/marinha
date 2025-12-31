@@ -18,6 +18,7 @@ const statusBox = document.getElementById("statusBox"),
       localInfo = document.getElementById("localInfo");
 
 let currentCity = DEFAULT_CITY;
+let chartInstance = null;
 
 /* ------------------ UTILITÁRIOS ------------------ */
 const horaNoTZ = (iso, tz) => new Intl.DateTimeFormat("pt-BR", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz }).format(new Date(iso));
@@ -141,29 +142,66 @@ function render(data, src, ts, tz) {
     drawChart(data);
 }
 
-/* ------------------ GRÁFICO ------------------ */
+/* ------------------ GRÁFICO COM CHART.JS ------------------ */
 function drawChart(data) {
     const labels = data.map(o => toLabelDate(o.date));
-    const values = data.map(o => parseFloat(duracaoH(o.results.day_length)));
-    const w = graficoCtx.canvas.width, h = graficoCtx.canvas.height;
-    const max = Math.max(...values), min = Math.min(...values);
-    const step = w / (values.length - 1 || 1);
-    const scale = v => h - (v - min) * (h / (max - min || 1));
 
-    graficoCtx.clearRect(0, 0, w, h);
-    graficoCtx.beginPath();
-    graficoCtx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent');
-    graficoCtx.lineWidth = 2;
+    // Converter horário para decimal (ex.: 6:30 => 6.5)
+    const toDecimal = hms => {
+        const [h, m] = hms.split(":").map(Number);
+        return h + m / 60;
+    };
 
-    values.forEach((v, i) => {
-        const x = i * step, y = scale(v);
-        i ? graficoCtx.lineTo(x, y) : graficoCtx.moveTo(x, y);
+    const sunrise = data.map(o => toDecimal(horaNoTZ(o.results.sunrise, currentCity.tz)));
+    const sunset = data.map(o => toDecimal(horaNoTZ(o.results.sunset, currentCity.tz)));
+
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(graficoCtx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Nascer 🌅',
+                    data: sunrise,
+                    borderColor: '#ff9800',
+                    backgroundColor: 'rgba(255,152,0,0.2)',
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'Pôr 🌇',
+                    data: sunset,
+                    borderColor: '#2196f3',
+                    backgroundColor: 'rgba(33,150,243,0.2)',
+                    fill: true,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: context => {
+                            const h = Math.floor(context.raw);
+                            const m = Math.round((context.raw - h) * 60);
+                            return `${context.dataset.label}: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    title: { display: true, text: 'Hora (decimal)' },
+                    min: 0,
+                    max: 24
+                }
+            }
+        }
     });
-    graficoCtx.stroke();
-
-    graficoCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-2');
-    graficoCtx.font = "12px system-ui";
-    labels.forEach((lab, i) => graficoCtx.fillText(lab, i * step + 4, h - 4));
 }
 
 /* ------------------ ATUALIZAR ------------------ */
@@ -176,7 +214,9 @@ async function atualizar() {
         cache[currentCity.name] = { coords: { lat: currentCity.lat, lon: currentCity.lon }, tz: currentCity.tz, dados, ts };
         saveCache(cache);
         render(dados, "✅ Dados atualizados", ts, currentCity.tz);
-    } catch (e) { Swal.fire({ icon: "error", title: "Falha na atualização", text: String(e) }); }
+    } catch (e) {
+        Swal.fire({ icon: "error", title: "Falha na atualização", text: String(e) });
+    }
 }
 
 /* ------------------ INICIALIZAÇÃO ------------------ */
@@ -186,6 +226,7 @@ function carregar() {
     selectCity(DEFAULT_CITY);
     if (AUTO_UPDATE_ON_LOAD && navigator.onLine) atualizar();
 }
+
 document.addEventListener("DOMContentLoaded", carregar);
 atualizarBtn.onclick = atualizar;
 
