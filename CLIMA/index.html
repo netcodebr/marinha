@@ -1,53 +1,58 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>🌅 Nascer & Pôr do Sol — Brasil</title>
+  <meta name="description" content="Descubra horários de nascer e pôr do sol no Brasil. Atualizações em tempo real e cache offline.">
 
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icons/sun-192.png" type="image/png">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+  <script src="main.js" defer></script>
 </head>
 <body>
   <header class="topbar">
     <h1>🌅 Nascer & Pôr do Sol — Brasil</h1>
-    <button id="temaBtn" title="Alternar tema">🌙</button>
+    <button id="temaBtn" title="Alternar tema" aria-pressed="false">🌙</button>
   </header>
 
-  <div class="toolbar card">
+  <section class="toolbar card" aria-label="Ferramentas de busca e status">
     <div class="search-wrap">
       <label for="citySearch">Cidade</label>
-      <input id="citySearch" type="text"
-             placeholder="Ex.: São Paulo, Fortaleza, Curitiba…"
-             autocomplete="off">
-      <ul id="suggestions" class="suggestions"></ul>
+      <input id="citySearch" type="text" placeholder="Ex.: São Paulo, Fortaleza, Curitiba…" autocomplete="off" list="cityOptions">
+      <datalist id="cityOptions"></datalist>
+      <ul id="suggestions" class="suggestions" role="listbox"></ul>
     </div>
 
-    <div class="chips" id="recentChips"></div>
+    <nav class="chips" id="recentChips" role="navigation" aria-label="Cidades recentes"></nav>
 
     <div class="status-row">
-      <div id="statusBox" class="offline">⏳ Verificando status...</div>
+      <div id="statusBox" class="offline" aria-live="polite">⏳ Verificando status...</div>
       <div class="infoTime" id="tempoCache"></div>
     </div>
-  </div>
+  </section>
 
-  <main class="card">
+  <main class="card" role="main">
     <div class="controls">
       <button id="atualizar">🔄 Atualizar agora</button>
       <span id="localInfo" class="local-info">Local: —</span>
     </div>
 
-    <p id="info">Carregando dados…</p>
-    <div id="saida"></div>
-    <canvas id="grafico" height="220"></canvas>
+    <section id="infoSection" aria-label="Informações do nascer e pôr do sol">
+      <p id="info">Carregando dados…</p>
+      <div id="saida"></div>
+    </section>
+
+    <section aria-label="Gráfico dos próximos 14 dias">
+      <canvas id="grafico" height="220" role="img" aria-label="Gráfico de horários de nascer e pôr do sol para 14 dias"></canvas>
+    </section>
 
     <small id="footNote">
       Dados com cache offline • API: sunrise-sunset.org • Geocoding: Open-Meteo
     </small>
   </main>
-
-  <script src="main.js"></script>
 </body>
 </html>
