@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🌅 Nascer & Pôr do Sol — Brasil</title>
+  <meta name="description" content="Descubra horários de nascer e pôr do sol no Brasil. Atualizações em tempo real e cache offline.">
+
+  <link rel="icon" href="icons/sun-192.png" type="image/png">
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+  <script src="main.js" defer></script>
+</head>
+
+<body>
+
+<header class="topbar">
+  <h1>🌅 Nascer & Pôr do Sol — Brasil</h1>
+  <button id="temaBtn">🌙</button>
+</header>
+
+<section class="toolbar card">
+  <div class="search-wrap">
+    <label>Cidade</label>
+    <input id="citySearch" placeholder="Ex: São Paulo">
+    <ul id="suggestions" class="suggestions"></ul>
+  </div>
+
+  <nav class="chips" id="recentChips"></nav>
+
+  <div class="status-row">
+    <div id="statusBox">⏳</div>
+    <div id="tempoCache"></div>
+  </div>
+</section>
+
+<main class="card">
+
+  <div class="controls">
+    <button id="atualizar">🔄 Atualizar</button>
+    <span id="localInfo">Local: —</span>
+  </div>
+
+  <p id="info">Carregando…</p>
+  <div id="saida"></div>
+
+  <small id="footNote">
+    API sunrise-sunset.org • Cache Offline
+  </small>
+
+</main>
+
+</body>
+</html>
